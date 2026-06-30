@@ -1,0 +1,22 @@
+{
+  "modelo_final": "GradientBoosting_sklearn",
+  "threshold": 0.3416938953785348,
+  "treino_roc_auc": 0.8601017693436475,
+  "validacao_roc_auc": 0.8507800994108985,
+  "gap_auc_treino_validacao": 0.009321669932748966,
+  "teste_roc_auc": 0.8397338298418754,
+  "teste_pr_auc": 0.669171915370906,
+  "teste_f1": 0.6266233766233766,
+  "teste_recall": 0.6868327402135231,
+  "teste_precision": 0.5761194029850746,
+  "teste_accuracy": 0.78240302743614,
+  "tn": 634,
+  "fp": 142,
+  "fn": 88,
+  "tp": 193,
+  "n_train": 4930,
+  "n_val": 1056,
+  "n_test": 1057,
+  "churn_rate_total": 0.2653698707936959,
+  "churn_rate_test": 0.26584673604541154
+}

@@ -1,0 +1,31 @@
+﻿feature,importancia
+cat__Contract_Month-to-month,0.3562921406281001
+num__tenure,0.19435650575773428
+cat__InternetService_Fiber optic,0.11068801901291218
+cat__OnlineSecurity_No,0.09439726672650346
+cat__TechSupport_No,0.05674404167725025
+num__MonthlyCharges,0.05309536746784594
+cat__PaymentMethod_Electronic check,0.04965142531406491
+num__TotalCharges,0.022355714830069952
+cat__PaperlessBilling_No,0.014276756963682894
+cat__MultipleLines_No,0.009653392600280038
+cat__PaperlessBilling_Yes,0.008894389645970635
+cat__Contract_Two year,0.008837456514755733
+cat__OnlineBackup_No,0.008790377566717406
+num__SeniorCitizen,0.0032844289170066254
+cat__StreamingMovies_Yes,0.003270943224883024
+cat__Dependents_No,0.0020810672985753847
+cat__Contract_One year,0.0007209195956686631
+cat__Dependents_Yes,0.0006996783550225113
+cat__DeviceProtection_No,0.0006935110617803637
+cat__gender_Female,0.0005104047614198618
+cat__StreamingTV_Yes,0.00036584506141651944
+cat__gender_Male,0.0002120853222137536
+cat__OnlineBackup_Yes,0.0001282616961255752
+cat__Partner_No,0.0
+cat__Partner_Yes,0.0
+cat__PhoneService_Yes,0.0
+cat__PhoneService_No,0.0
+cat__MultipleLines_Yes,0.0
+cat__MultipleLines_No phone service,0.0
+cat__TechSupport_No internet service,0.0
