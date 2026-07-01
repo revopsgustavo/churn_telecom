@@ -1,6 +1,19 @@
 # Análise de Churn e Priorização de Retenção em Telecom
 
 # > Observação: este projeto utiliza uma base pública de churn em telecom para fins educacionais e de portfólio. Os identificadores de clientes presentes na base são tratados apenas como chaves técnicas da amostra e não representam dados sensíveis reais.
+
+## Executive Case
+
+Além da documentação técnica, este projeto possui um estudo executivo com o raciocínio de negócio, principais achados, recomendações e próximos passos.
+
+➡️ [Leia o Executive Case](EXECUTIVE_CASE.md)
+
+## Dashboard Executivo
+
+O projeto também possui um dashboard executivo em HTML com KPIs, segmentação de risco, lift/gain, ROI simulado e recomendações de negócio.
+
+[Abra o Dashboard](dashboard/index.html)
+
 ## Resumo executivo
 
 - Base analisada: 7.043 clientes de telecom.

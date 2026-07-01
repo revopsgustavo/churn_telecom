@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Executivo | Churn Telecom</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #667085;
+      --line: #d9e0ea;
+      --navy: #0f2a43;
+      --teal: #14858c;
+      --green: #2e9f65;
+      --amber: #d99625;
+      --red: #c44b4f;
+      --blue: #3d6fb6;
+      --shadow: 0 10px 28px rgba(15, 42, 67, .09);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.45;
+    }
+    header {
+      background: linear-gradient(135deg, #0f2a43 0%, #174963 48%, #14858c 100%);
+      color: #fff;
+      padding: 34px 28px 30px;
+    }
+    .wrap { max-width: 1180px; margin: 0 auto; }
+    .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: 12px; opacity: .82; font-weight: 700; }
+    h1 { margin: 10px 0 8px; font-size: clamp(28px, 4vw, 46px); line-height: 1.05; letter-spacing: 0; }
+    .subtitle { max-width: 850px; color: rgba(255,255,255,.86); font-size: 17px; margin: 0; }
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      background: rgba(255,255,255,.96);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+    nav .wrap { display: flex; gap: 8px; overflow-x: auto; padding: 10px 28px; }
+    nav a {
+      color: var(--navy);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      padding: 8px 12px;
+      border-radius: 6px;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 700;
+      background: #fff;
+    }
+    main { padding: 26px 28px 48px; }
+    section { margin: 0 0 24px; }
+    .grid { display: grid; gap: 16px; }
+    .kpis { grid-template-columns: repeat(7, minmax(130px, 1fr)); }
+    .two { grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); }
+    .pad { padding: 18px; }
+    .kpi { padding: 15px; min-height: 112px; display: flex; flex-direction: column; justify-content: space-between; }
+    .kpi .label { color: var(--muted); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+    .kpi .value { font-size: 27px; font-weight: 800; margin-top: 10px; }
+    .kpi .note { color: var(--muted); font-size: 12px; margin-top: 8px; }
+    h2 { margin: 0 0 4px; font-size: 21px; letter-spacing: 0; }
+    h3 { margin: 0 0 10px; font-size: 15px; }
+    .section-head { display:flex; justify-content:space-between; gap:16px; align-items:end; margin-bottom: 12px; }
+    .section-head p { margin: 0; color: var(--muted); max-width: 760px; }
+    .callout { border-left: 4px solid var(--teal); background: #eef8f8; padding: 14px 16px; border-radius: 6px; color: #123a3d; }
+    .decision { border-left-color: var(--amber); background: #fff7e8; color: #51320b; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 10px 9px; border-bottom: 1px solid var(--line); text-align: left; }
+    th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+    td.num, th.num { text-align: right; }
+    .tag { display:inline-flex; align-items:center; padding: 4px 8px; border-radius: 999px; font-weight: 800; font-size: 12px; }
+    .tag.baixo { background:#eaf6ef; color:#187143; }
+    .tag.medio { background:#fff7e8; color:#94620e; }
+    .tag.alto { background:#fff0ea; color:#a4441a; }
+    .tag.critico { background:#ffe9ec; color:#a0222b; }
+    .chart { width: 100%; min-height: 260px; }
+    .bars { display: grid; gap: 11px; }
+    .bar-row { display:grid; grid-template-columns: 150px 1fr 74px; gap:10px; align-items:center; }
+    .track { height: 14px; background: #edf1f6; border-radius: 999px; overflow:hidden; }
+    .fill { height:100%; border-radius: 999px; background: var(--teal); }
+    .fill.red { background: var(--red); }
+    .fill.amber { background: var(--amber); }
+    .fill.blue { background: var(--blue); }
+    .fill.green { background: var(--green); }
+    .metric-list { display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .metric { border:1px solid var(--line); border-radius: 6px; padding: 12px; }
+    .metric b { display:block; font-size: 22px; margin-top: 4px; }
+    .small { color: var(--muted); font-size: 12px; }
+    .matrix { display:grid; grid-template-columns: repeat(2, minmax(90px,1fr)); gap: 8px; }
+    .cell { border-radius: 6px; padding: 14px; color:#fff; min-height: 84px; display:flex; flex-direction:column; justify-content:space-between; }
+    .tn { background:#2e9f65; } .fp { background:#d99625; } .fn { background:#c44b4f; } .tp { background:#3d6fb6; }
+    .cell span { font-size:12px; opacity:.9; } .cell b { font-size:28px; }
+    .recommendations { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+    .rec { border:1px solid var(--line); border-radius: 8px; padding: 16px; background:#fff; }
+    .rec h3 { color: var(--navy); }
+    .rec ul { margin: 8px 0 0; padding-left: 18px; }
+    .rec li { margin: 7px 0; }
+    .footer-note { color: var(--muted); font-size: 12px; margin-top: 12px; }
+    svg text { font-family: Inter, Segoe UI, Arial, sans-serif; fill: var(--muted); font-size: 12px; }
+    .axis { stroke: var(--line); stroke-width: 1; }
+    @media (max-width: 1020px) { .kpis { grid-template-columns: repeat(2, 1fr); } .two, .three, .recommendations { grid-template-columns: 1fr; } }
+    @media (max-width: 620px) { main, header { padding-left: 16px; padding-right:16px; } nav .wrap { padding-left:16px; padding-right:16px; } .bar-row { grid-template-columns: 100px 1fr 58px; } .metric-list { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="eyebrow">Executive Dashboard | Churn Telecom</div>
+      <h1>Da previs&atilde;o &agrave; decis&atilde;o de reten&ccedil;&atilde;o</h1>
+      <p class="subtitle">Painel executivo para priorizar clientes com maior risco estimado de churn, interpretar o impacto financeiro simulado e orientar a&ccedil;&otilde;es de reten&ccedil;&atilde;o baseadas em dados.</p>
+    </div>
+  </header>
+  <nav>
+    <div class="wrap">
+      <a href="#resumo">Resumo</a>
+      <a href="#risco">Risco</a>
+      <a href="#modelo">Modelo</a>
+      <a href="#priorizacao">Prioriza&ccedil;&atilde;o</a>
+      <a href="#financeiro">ROI</a>
+      <a href="#acoes">A&ccedil;&otilde;es</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <section id="resumo">
+      <div class="grid kpis" id="kpis"></div>
+    </section>
+
+    <section id="risco">
+      <div class="section-head">
+        <div>
+          <h2>Segmenta&ccedil;&atilde;o de risco</h2>
+          <p>O churn n&atilde;o se distribui de forma homog&ecirc;nea. A prioriza&ccedil;&atilde;o por score separa grupos com risco real muito diferente.</p>
+        </div>
+      </div>
+      <div class="grid two">
+        <div class="panel pad">
+          <h3>Taxa real de churn por faixa</h3>
+          <div class="bars" id="riskBars"></div>
+          <p class="footer-note">Faixas constru&iacute;das a partir da probabilidade estimada pelo modelo.</p>
+        </div>
+        <div class="panel pad">
+          <h3>Resumo por faixa</h3>
+          <table id="riskTable"></table>
+        </div>
+      </div>
+    </section>
+
+    <section id="modelo">
+      <div class="section-head">
+        <div>
+          <h2>Qualidade do suporte &agrave; decis&atilde;o</h2>
+          <p>O objetivo do modelo &eacute; ordenar a fila de reten&ccedil;&atilde;o, n&atilde;o substituir julgamento de neg&oacute;cio.</p>
+        </div>
+      </div>
+      <div class="grid two">
+        <div class="panel pad">
+          <h3>M&eacute;tricas em teste</h3>
+          <div class="metric-list" id="metricsGrid"></div>
+          <p class="footer-note">Threshold escolhido na valida&ccedil;&atilde;o e avaliado em teste.</p>
+        </div>
+        <div class="panel pad">
+          <h3>Matriz de confus&atilde;o</h3>
+          <div class="matrix" id="confusion"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="priorizacao">
+      <div class="section-head">
+        <div>
+          <h2>Lift e captura acumulada</h2>
+          <p>A pergunta executiva &eacute; quantos churners s&atilde;o capturados ao abordar a fatia mais arriscada da base.</p>
+        </div>
+      </div>
+      <div class="grid two">
+        <div class="panel pad">
+          <h3>Gain acumulado por decis</h3>
+          <svg class="chart" id="gainChart" viewBox="0 0 720 320" role="img" aria-label="Curva de gain acumulado"></svg>
+        </div>
+        <div class="panel pad">
+          <h3>Lift por decil</h3>
+          <div class="bars" id="liftBars"></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="grid two">
+        <div class="panel pad">
+          <h3>Fatores associados ao risco previsto</h3>
+          <div class="bars" id="featureBars"></div>
+          <p class="footer-note">Import&acirc;ncia de vari&aacute;vel n&atilde;o prova causalidade.</p>
+        </div>
+        <div class="panel pad">
+          <h3>Leitura executiva</h3>
+          <div class="callout">
+            Clientes em faixa cr&iacute;tica apresentaram churn real superior a 74%, enquanto clientes de baixo risco ficaram pr&oacute;ximos de 7%. Isso transforma o score em uma ferramenta de prioriza&ccedil;&atilde;o operacional.
+          </div>
+          <div class="callout decision" style="margin-top:12px;">
+            Decis&atilde;o recomendada: iniciar piloto controlado nos grupos de maior risco antes de escalar campanhas de reten&ccedil;&atilde;o.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="financeiro">
+      <div class="section-head">
+        <div>
+          <h2>Impacto financeiro simulado</h2>
+          <p>ROI tratado como simula&ccedil;&atilde;o, dependente de premissas de margem, custo unit&aacute;rio e uplift esperado.</p>
+        </div>
+      </div>
+      <div class="grid two">
+        <div class="panel pad">
+          <h3>ROI por p&uacute;blico abordado</h3>
+          <div class="bars" id="roiBars"></div>
+          <p class="footer-note">Campanhas mais concentradas tendem a preservar melhor o retorno estimado.</p>
+        </div>
+        <div class="panel pad">
+          <h3>Sensibilidade do ROI | Top 5%</h3>
+          <table id="sensitivityTable"></table>
+        </div>
+      </div>
+    </section>
+
+    <section id="acoes">
+      <div class="section-head">
+        <div>
+          <h2>Recomenda&ccedil;&otilde;es executivas</h2>
+          <p>Plano de uso do score como suporte &agrave; decis&atilde;o em reten&ccedil;&atilde;o.</p>
+        </div>
+      </div>
+      <div class="recommendations">
+        <div class="rec">
+          <h3>Curto prazo</h3>
+          <ul>
+            <li>Priorizar clientes cr&iacute;ticos e alto risco.</li>
+            <li>Integrar score em rotina de CRM.</li>
+            <li>Rodar piloto com grupo de controle.</li>
+          </ul>
+        </div>
+        <div class="rec">
+          <h3>M&eacute;dio prazo</h3>
+          <ul>
+            <li>Criar campanhas por faixa de risco.</li>
+            <li>Revisar onboarding nos primeiros meses.</li>
+            <li>Investigar experi&ecirc;ncia com fibra &oacute;ptica.</li>
+          </ul>
+        </div>
+        <div class="rec">
+          <h3>Longo prazo</h3>
+          <ul>
+            <li>Monitorar drift e performance.</li>
+            <li>Medir uplift real de campanhas.</li>
+            <li>Recalibrar threshold por capacidade operacional.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const data = {"metrics": {"modelo_final": "GradientBoosting_sklearn", "threshold": 0.3416938953785348, "treino_roc_auc": 0.8601017693436475, "validacao_roc_auc": 0.8507800994108985, "gap_auc_treino_validacao": 0.009321669932748966, "teste_roc_auc": 0.8397338298418754, "teste_pr_auc": 0.669171915370906, "teste_f1": 0.6266233766233766, "teste_recall": 0.6868327402135231, "teste_precision": 0.5761194029850746, "teste_accuracy": 0.78240302743614, "tn": 634, "fp": 142, "fn": 88, "tp": 193, "n_train": 4930, "n_val": 1056, "n_test": 1057, "churn_rate_total": 0.2653698707936959, "churn_rate_test": 0.26584673604541154}, "risk": [{"faixa_risco": "baixo", "clientes": 3779, "churn_real": 266, "taxa_churn_real": 0.0703889917967716, "prob_media_churn": 0.0789229323938296, "mensalidade_media": 56.70207726911881, "faixa_label": "Baixo"}, {"faixa_risco": "medio", "clientes": 1285, "churn_real": 365, "taxa_churn_real": 0.2840466926070039, "prob_media_churn": 0.2990267928653428, "mensalidade_media": 68.16642023346304, "faixa_label": "Medio"}, {"faixa_risco": "alto", "clientes": 1057, "churn_real": 551, "taxa_churn_real": 0.521286660359508, "prob_media_churn": 0.4951815387659475, "mensalidade_media": 77.14706717123936, "faixa_label": "Alto"}, {"faixa_risco": "critico", "clientes": 922, "churn_real": 687, "taxa_churn_real": 0.745119305856833, "prob_media_churn": 0.7088743199575356, "mensalidade_media": 78.8515726681128, "faixa_label": "Critico"}], "roi": [{"top_percentual_clientes": "5%", "clientes_abordados": 352, "churners_no_grupo": 307, "receita_preservada_estimada": 4175.1863129348285, "custo_campanha": 3520.0, "roi_estimado": 0.1861324752655762}, {"top_percentual_clientes": "10%", "clientes_abordados": 704, "churners_no_grupo": 550, "receita_preservada_estimada": 7479.975479199204, "custo_campanha": 7040.0, "roi_estimado": 0.0624965169317051}, {"top_percentual_clientes": "15%", "clientes_abordados": 1056, "churners_no_grupo": 768, "receita_preservada_estimada": 10444.765760045431, "custo_campanha": 10560.0, "roi_estimado": -0.0109123333290309}, {"top_percentual_clientes": "20%", "clientes_abordados": 1409, "churners_no_grupo": 964, "receita_preservada_estimada": 13110.357021723696, "custo_campanha": 14090.0, "roi_estimado": -0.0695275357186873}, {"top_percentual_clientes": "30%", "clientes_abordados": 2113, "churners_no_grupo": 1289, "receita_preservada_estimada": 17530.34253215959, "custo_campanha": 21130.0, "roi_estimado": -0.170357665302433}], "lift": [{"decil_risco": 1, "clientes": 705, "churners": 550, "churn_rate": 0.7801418439716312, "prob_media": 0.7364291934542635, "captura_churn_pct": 0.294275013376137, "captura_churn_acum_pct": 0.294275013376137, "clientes_acum_pct": 0.1000993894647167, "lift_vs_media": 2.9398282541959326}, {"decil_risco": 2, "clientes": 704, "churners": 414, "churn_rate": 0.5880681818181818, "prob_media": 0.57007331367596, "captura_churn_pct": 0.2215088282504012, "captura_churn_acum_pct": 0.5157838416265382, "clientes_acum_pct": 0.2000567939798381, "lift_vs_media": 2.216032212169852}, {"decil_risco": 3, "clientes": 704, "churners": 325, "churn_rate": 0.4616477272727273, "prob_media": 0.4382177323198728, "captura_churn_pct": 0.1738897806313536, "captura_churn_acum_pct": 0.689673622257892, "clientes_acum_pct": 0.3000141984949595, "lift_vs_media": 1.7396388139014545}, {"decil_risco": 4, "clientes": 704, "churners": 211, "churn_rate": 0.2997159090909091, "prob_media": 0.322655112874863, "captura_churn_pct": 0.1128945960406634, "captura_churn_acum_pct": 0.8025682182985554, "clientes_acum_pct": 0.3999716030100809, "lift_vs_media": 1.1294270453329442}, {"decil_risco": 5, "clientes": 705, "churners": 149, "churn_rate": 0.2113475177304964, "prob_media": 0.217106535808412, "captura_churn_pct": 0.0797217763509898, "captura_churn_acum_pct": 0.8822899946495452, "clientes_acum_pct": 0.5000709924747977, "lift_vs_media": 0.7964261997730799}, {"decil_risco": 6, "clientes": 704, "churners": 104, "churn_rate": 0.1477272727272727, "prob_media": 0.1413956544719827, "captura_churn_pct": 0.0556447298020331, "captura_churn_acum_pct": 0.9379347244515784, "clientes_acum_pct": 0.600028396989919, "lift_vs_media": 0.5566844204484653}, {"decil_risco": 7, "clientes": 704, "churners": 71, "churn_rate": 0.1008522727272727, "prob_media": 0.0916782114181863, "captura_churn_pct": 0.0379882289994649, "captura_churn_acum_pct": 0.9759229534510432, "clientes_acum_pct": 0.6999858015050404, "lift_vs_media": 0.3800441716523177}, {"decil_risco": 8, "clientes": 704, "churners": 26, "churn_rate": 0.0369318181818181, "prob_media": 0.0584854517011773, "captura_churn_pct": 0.0139111824505082, "captura_churn_acum_pct": 0.9898341359015516, "clientes_acum_pct": 0.7999432060201619, "lift_vs_media": 0.1391711051121163}, {"decil_risco": 9, "clientes": 704, "churners": 11, "churn_rate": 0.015625, "prob_media": 0.037820289198314, "captura_churn_pct": 0.0058855002675227, "captura_churn_acum_pct": 0.9957196361690744, "clientes_acum_pct": 0.8999006105352833, "lift_vs_media": 0.0588800829320492}, {"decil_risco": 10, "clientes": 705, "churners": 8, "churn_rate": 0.0113475177304964, "prob_media": 0.0260654917299644, "captura_churn_pct": 0.0042803638309256, "captura_churn_acum_pct": 1.0, "clientes_acum_pct": 1.0, "lift_vs_media": 0.0427611382428499}], "features": [{"feature": "cat__Contract_Month-to-month", "importancia": 0.3562921406281001, "feature_label": "Contract Month-to-month"}, {"feature": "num__tenure", "importancia": 0.1943565057577342, "feature_label": "tenure"}, {"feature": "cat__InternetService_Fiber optic", "importancia": 0.1106880190129121, "feature_label": "InternetService Fiber optic"}, {"feature": "cat__OnlineSecurity_No", "importancia": 0.0943972667265034, "feature_label": "OnlineSecurity No"}, {"feature": "cat__TechSupport_No", "importancia": 0.0567440416772502, "feature_label": "TechSupport No"}, {"feature": "num__MonthlyCharges", "importancia": 0.0530953674678459, "feature_label": "MonthlyCharges"}, {"feature": "cat__PaymentMethod_Electronic check", "importancia": 0.0496514253140649, "feature_label": "PaymentMethod Electronic check"}, {"feature": "num__TotalCharges", "importancia": 0.0223557148300699, "feature_label": "TotalCharges"}], "sensitivity": [{"uplift_assumido": 0.1, "custo_unitario_assumido": 5, "roi_estimado": -0.2092450164896157}, {"uplift_assumido": 0.1, "custo_unitario_assumido": 10, "roi_estimado": -0.6046225082448079}, {"uplift_assumido": 0.1, "custo_unitario_assumido": 20, "roi_estimado": -0.802311254122404}, {"uplift_assumido": 0.2, "custo_unitario_assumido": 5, "roi_estimado": 0.5815099670207685}, {"uplift_assumido": 0.2, "custo_unitario_assumido": 10, "roi_estimado": -0.2092450164896157}, {"uplift_assumido": 0.2, "custo_unitario_assumido": 20, "roi_estimado": -0.6046225082448079}, {"uplift_assumido": 0.3, "custo_unitario_assumido": 5, "roi_estimado": 1.3722649505311526}, {"uplift_assumido": 0.3, "custo_unitario_assumido": 10, "roi_estimado": 0.1861324752655762}, {"uplift_assumido": 0.3, "custo_unitario_assumido": 20, "roi_estimado": -0.4069337623672118}]};
+    const brPct = v => (v * 100).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%';
+    const brNum = v => Number(v).toLocaleString('pt-BR');
+    const brMoney = v => 'R$ ' + Number(v).toLocaleString('pt-BR', { maximumFractionDigits: 0 });
+    const brDec = v => Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const riskClass = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+    function mountKpis() {
+      const m = data.metrics;
+      const critical = data.risk.find(r => r.faixa_risco === 'critico');
+      const top5 = data.roi.find(r => r.top_percentual_clientes === '5%');
+      const items = [
+        ['Clientes', '7.043', 'Base analisada'],
+        ['Churn geral', brPct(m.churn_rate_total), 'Taxa total da base'],
+        ['Modelo final', 'Gradient Boosting', 'Suporte &agrave; decis&atilde;o'],
+        ['ROC AUC', brDec(m.teste_roc_auc), 'Avalia&ccedil;&atilde;o em teste'],
+        ['Recall churn', brPct(m.teste_recall), 'Captura de churners'],
+        ['Faixa cr&iacute;tica', brPct(critical.taxa_churn_real), brNum(critical.clientes) + ' clientes'],
+        ['ROI Top 5%', brDec(top5.roi_estimado), 'Simula&ccedil;&atilde;o mensal']
+      ];
+      document.getElementById('kpis').innerHTML = items.map(([label, value, note]) => `<div class="panel kpi"><div class="label">${label}</div><div class="value">${value}</div><div class="note">${note}</div></div>`).join('');
+    }
+
+    function barRows(el, rows, opts) {
+      const max = opts.max ?? Math.max(...rows.map(r => r.value));
+      document.getElementById(el).innerHTML = rows.map(r => {
+        const w = Math.max(2, (r.value / max) * 100);
+        const cls = r.className || '';
+        return `<div class="bar-row"><div>${r.label}</div><div class="track"><div class="fill ${cls}" style="width:${w}%"></div></div><b>${r.display}</b></div>`;
+      }).join('');
+    }
+
+    function mountRisk() {
+      const rows = data.risk.map(r => ({ label: r.faixa_label, value: r.taxa_churn_real, display: brPct(r.taxa_churn_real), className: riskClass(r.faixa_label) }));
+      barRows('riskBars', rows, { max: .8 });
+      document.getElementById('riskTable').innerHTML = `<thead><tr><th>Faixa</th><th class="num">Clientes</th><th class="num">Churn real</th><th class="num">Prob. m&eacute;dia</th></tr></thead><tbody>` +
+        data.risk.map(r => `<tr><td><span class="tag ${riskClass(r.faixa_label)}">${r.faixa_label}</span></td><td class="num">${brNum(r.clientes)}</td><td class="num">${brPct(r.taxa_churn_real)}</td><td class="num">${brPct(r.prob_media_churn)}</td></tr>`).join('') + '</tbody>';
+    }
+
+    function mountMetrics() {
+      const m = data.metrics;
+      const items = [
+        ['ROC AUC', brDec(m.teste_roc_auc)], ['PR AUC', brDec(m.teste_pr_auc)],
+        ['F1', brDec(m.teste_f1)], ['Recall', brPct(m.teste_recall)],
+        ['Precision', brPct(m.teste_precision)], ['Accuracy', brPct(m.teste_accuracy)]
+      ];
+      document.getElementById('metricsGrid').innerHTML = items.map(([k,v]) => `<div class="metric"><span class="small">${k}</span><b>${v}</b></div>`).join('');
+      document.getElementById('confusion').innerHTML = `
+        <div class="cell tn"><span>TN | reten&ccedil;&atilde;o correta</span><b>${m.tn}</b></div>
+        <div class="cell fp"><span>FP | falso alerta</span><b>${m.fp}</b></div>
+        <div class="cell fn"><span>FN | churn n&atilde;o capturado</span><b>${m.fn}</b></div>
+        <div class="cell tp"><span>TP | churn capturado</span><b>${m.tp}</b></div>`;
+    }
+
+    function mountLift() {
+      const rows = data.lift.slice(0, 8).map(r => ({ label: 'Decil ' + r.decil_risco, value: r.lift_vs_media, display: brDec(r.lift_vs_media) + 'x', className: r.decil_risco <= 2 ? 'red' : 'blue' }));
+      barRows('liftBars', rows, { max: 3 });
+      drawGainChart();
+    }
+
+    function drawGainChart() {
+      const svg = document.getElementById('gainChart');
+      const w = 720, h = 320, l = 56, r = 18, t = 24, b = 46;
+      const pts = data.lift.map(d => [l + d.clientes_acum_pct * (w-l-r), t + (1 - d.captura_churn_acum_pct) * (h-t-b)]);
+      const diag = `M ${l} ${h-b} L ${w-r} ${t}`;
+      const line = 'M ' + pts.map(p => p.join(' ')).join(' L ');
+      svg.innerHTML = `
+        <line class="axis" x1="${l}" y1="${h-b}" x2="${w-r}" y2="${h-b}"></line>
+        <line class="axis" x1="${l}" y1="${t}" x2="${l}" y2="${h-b}"></line>
+        <path d="${diag}" stroke="#b9c3d0" stroke-dasharray="5 5" fill="none" stroke-width="2"></path>
+        <path d="${line}" stroke="#14858c" fill="none" stroke-width="4" stroke-linecap="round"></path>
+        ${pts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#0f2a43"></circle>`).join('')}
+        <text x="${l}" y="${h-14}">Clientes abordados acumulado</text>
+        <text x="${l-40}" y="${t+6}">100%</text>
+        <text x="${w-r-34}" y="${h-14}">100%</text>
+      `;
+    }
+
+    function mountFeatures() {
+      const max = Math.max(...data.features.map(f => f.importancia));
+      const rows = data.features.map(f => ({ label: f.feature_label, value: f.importancia, display: brPct(f.importancia), className: 'blue' }));
+      barRows('featureBars', rows, { max });
+    }
+
+    function mountRoi() {
+      const maxAbs = Math.max(...data.roi.map(r => Math.abs(r.roi_estimado)));
+      const rows = data.roi.map(r => ({
+        label: 'Top ' + r.top_percentual_clientes,
+        value: Math.abs(r.roi_estimado),
+        display: brDec(r.roi_estimado),
+        className: r.roi_estimado >= 0 ? 'green' : 'red'
+      }));
+      barRows('roiBars', rows, { max: maxAbs });
+      const uplifts = [...new Set(data.sensitivity.map(s => s.uplift_assumido))].sort((a,b)=>a-b);
+      const costs = [...new Set(data.sensitivity.map(s => s.custo_unitario_assumido))].sort((a,b)=>a-b);
+      let html = '<thead><tr><th>Uplift</th>' + costs.map(c => `<th class="num">Custo R$ ${c}</th>`).join('') + '</tr></thead><tbody>';
+      uplifts.forEach(u => {
+        html += `<tr><td>${brPct(u)}</td>`;
+        costs.forEach(c => {
+          const item = data.sensitivity.find(s => s.uplift_assumido === u && s.custo_unitario_assumido === c);
+          const val = item ? item.roi_estimado : null;
+          const color = val >= 0 ? '#eaf6ef' : '#ffe9ec';
+          html += `<td class="num" style="background:${color};font-weight:800;">${val == null ? '-' : brDec(val)}</td>`;
+        });
+        html += '</tr>';
+      });
+      document.getElementById('sensitivityTable').innerHTML = html + '</tbody>';
+    }
+
+    mountKpis();
+    mountRisk();
+    mountMetrics();
+    mountLift();
+    mountFeatures();
+    mountRoi();
+  </script>
+</body>
+</html>
